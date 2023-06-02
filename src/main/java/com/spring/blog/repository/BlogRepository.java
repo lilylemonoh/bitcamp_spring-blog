@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-@Mapper // Mapper는 인터페이스임.
+@Mapper // Mapper는 인터페이스임. 구현체가 없음. Mapper 어노테이션을 붙이면 마이바티스의 관리를 받는다.
 public interface BlogRepository {
 
     // 사전에 정의해야 하는 메서드들(테스트를 위해)
