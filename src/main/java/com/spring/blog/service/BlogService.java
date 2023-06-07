@@ -11,7 +11,7 @@ public interface BlogService {
     List<Blog> findAll();
 
     // 단일 포스팅을 조회하는 메서드 findById()를 선언
-    Blog findByID(long blogId);
+    Blog findById(long blogId);
 
     // 단일 포스팅을 삭제하는 메서드 deleteById()를 선언
     void deleteById(long blogId);

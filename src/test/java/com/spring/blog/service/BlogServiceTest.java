@@ -43,7 +43,7 @@ public class BlogServiceTest {
         String writer = "2번유저";
         String blogTitle = "2번제목";
         // when : DB에서 2번 유저 얻어오기
-        Blog blog = blogService.findByID(blogId);
+        Blog blog = blogService.findById(blogId);
         // then : 얻어온 유저의 번호는 blogId 변수, 글쓴이는 writer 변수, 제목은 blogTitle변수에 든 값일 것이다.
         assertThat(blog.getWriter()).isEqualTo(writer);
         assertThat(blog.getBlogId()).isEqualTo(blogId);
@@ -60,7 +60,7 @@ public class BlogServiceTest {
         // when : DB에서 2번 유저 삭제하기
         blogService.deleteById(blogId);
         // then : 2번으로 조회하면 null, 전체 개수 2개
-        assertNull(blogService.findByID(blogId));
+        assertNull(blogService.findById(blogId));
         assertEquals(2, blogService.findAll().size());
     }
 
@@ -104,9 +104,9 @@ public class BlogServiceTest {
         // when : 수정한 Blog 객체 DB에 반영
         blogService.update(blog);
         // then : blogId번 글을 가져와서 blogTitle, blogContent가 수정을 위한 픽스쳐와 동일하다고 단언.
-        assertEquals(blogId, blogService.findByID(blogId).getBlogId());
-        assertEquals(blogTitle,blogService.findByID(blogId).getBlogTitle());
-        assertEquals(blogContent, blogService.findByID(blogId).getBlogContent());
+        assertEquals(blogId, blogService.findById(blogId).getBlogId());
+        assertEquals(blogTitle,blogService.findById(blogId).getBlogTitle());
+        assertEquals(blogContent, blogService.findById(blogId).getBlogContent());
     }
 
 

@@ -10,15 +10,16 @@
 </head>
 <body>
 
-    ${blogList}
+<!--부트스트랩 테이블을 이용해서 글번호, 글제목, 글쓴이, 쓴날짜, 수정날짜, 조회수가 노출되게 해주세요-->
+
 <div class="container">
-    <table class="table">
+  <h1 class="text-center">게시물 목록</h1>
+    <table class="table table-hover">
       <thead>
         <tr>
-          <th>번호</th>
-          <th>작성자</th>
-          <th>제목</th>
-          <th>내용</th>
+          <th>글번호</th>
+          <th>글제목</th>
+          <th>글쓴이</th>
           <th>작성일</th>
           <th>수정일</th>
           <th>조회수</th>
@@ -28,16 +29,16 @@
         <c:forEach var="blog" items="${blogList}">
           <tr>
             <td>${blog.blogId}</td>
+            <td><a href="/blog/detail/${blog.blogId}">${blog.blogTitle}</a></td>
             <td>${blog.writer}</td>
-            <td>${blog.blogTitle}</td>
-            <td>${blog.blogContent}</td>
             <td>${blog.publishedAt}</td>
             <td>${blog.updatedAt}</td>
             <td>${blog.blogCount}</td>
           </tr>
         </c:forEach>
       </tbody>
-    </table>
-  </div>
+    </table><!--.table table-hover-->
+  </div><!--.container-->
+
 </body>
 </html>
