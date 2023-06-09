@@ -17,6 +17,8 @@
            blog_count AS blogCount
         FROM
            blog
+        ORDER BY
+            blog_id DESC
     </select>
 
     <!--위의 SELECT 태그를 참조해서 방금 만든 findById를 연결해 주시고, 리턴자료도 매칭해주세요.-->

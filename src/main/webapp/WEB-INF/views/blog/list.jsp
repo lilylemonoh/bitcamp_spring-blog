@@ -38,6 +38,11 @@
         </c:forEach>
       </tbody>
     </table><!--.table table-hover-->
+
+<div class="col-1">
+  <a href="/blog/insert" class="btn btn-primary">글쓰기</a>
+</div>
+
   </div><!--.container-->
 
 </body>
