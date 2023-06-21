@@ -128,11 +128,39 @@
 
         // blogId를 받아 전체 데이터를 JS 내부로 가져오는 함수 선언
         function getAllReplies(id) {
-            let url = `http://localhost:8080/reply/${id}/all`;
+            let url = `http://localhost:8080/reply/\${id}/all`;
+            //<%-- jsp 내부에서 자바스크립트 쓸 때 백틱 문자열 사용할 때(리터럴 형식)
+            // ${}를 쓰려면 앞에 백슬래시 붙여야 한다.
+            // 자바스크립트의 id 변수가 필요한 건데, 백슬래시 안 쓰면
+            // jsp 내부의 id변수로 해석해버림 (우선순위가 jsp가 높음)--%>
+
+            let str = ""; // 받아온 json을 표현할 html 코드를 저장할 문자열 srt 선언
+
             fetch(url, {method:'get'}) // get 방식으로 위 주소에 요청 넣기
             .then((res) => res.json()) // 응답 받은 요소 중 json만 뽑기
-            .then((data) => { // 뽑아온 json으로 처리작업하기
-                console.log(data);
+            .then((replies) => { // 뽑아온 json으로 처리작업하기
+                console.log(replies);
+            //    for(reply of replies) {
+            //    console.log(reply);
+            //    console.log("-------");
+            //        str += `<h3> 글쓴이 : \${reply.replyWriter},
+            //            댓글내용 : \${reply.replyContent}</h3>`;
+            //    }
+
+                // .map()을 이용한 간결한 반복문 처리
+                replies.map((reply, i) => { // 첫 파라미터 : 반복대상자료,
+                    // 두 번째 파라미터 : 순번
+                    str += `<h3> \${i+1}번째 댓글 || 글쓴이 : \${reply.replyWriter},
+                        댓글내용 : \${reply.replyContent}</h3>`;
+                }
+
+                )
+                
+                console.log(str); // 저장된 태그 확인
+                // #(id) replies 요소를 변수에 저장해주세요
+                const $replies = document.getElementById('replies');
+                // 저장된 #replies의 innerHTML에 str을 대입해 실제 화면에 출력되게 해주세요
+                $replies.innerHTML = str;
             });
         }
         // 함수 호출
