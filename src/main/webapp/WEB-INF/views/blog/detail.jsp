@@ -115,10 +115,24 @@
 
     <div class="row">
         <div id="replies">
-
-
         </div>
     </div>
+
+    <div class="row">
+        <!--비동기 form의 경우는 목적지로 이동하지 않고 페이지 내에서 처리가 되므로 action을 가지지 않습니다.
+        그리고 제출버튼도 제출 기능을 막고 fetch요청만 넣습니다. -->
+            <div class="col-2">
+                <input type="text" class="form-control" id="replyWriter" name="replyWriter">
+            </div>
+            <div class="col-6">
+                <input type="text" class="form-control" id="replyContent" name="replyContent">
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary" id="replySubmit">댓글쓰기</button>
+            </div>
+    </div>
+
+    
 
 
     </div><!--.container-->
@@ -151,7 +165,11 @@
                 replies.map((reply, i) => { // 첫 파라미터 : 반복대상자료,
                     // 두 번째 파라미터 : 순번
                     str += `<h3> \${i+1}번째 댓글 || 글쓴이 : \${reply.replyWriter},
-                        댓글내용 : \${reply.replyContent}</h3>`;
+                        댓글내용 : \${reply.replyContent}
+                    <span class="deleteReplyBtn" data-replyId="\${reply.replyId}">
+                        [삭제]
+                    </span>
+                </h3>`;
                 }
 
                 )
@@ -165,6 +183,79 @@
         }
         // 함수 호출
         getAllReplies(blogId);
+
+        // 해당 함수 실행 시 비동기 폼에 작성된 글쓴이, 내용으로 댓글 입력
+        function insertReply(){
+            let url = `http://localhost:8080/reply`;
+
+            // 요소가 다 채워졌는지 확인
+            if(document.getElementById("replyWriter").value.trim() === "") {
+                alert("글쓴이를 채워주셔야 합니다.");
+                return;
+            }
+            if(document.getElementById("replyContent").value.trim() === "") {
+                alert("본문을 채워주셔야 합니다.");
+                return;
+            }
+
+
+            fetch(url, {
+                method:'post',
+                headers: { // header에는 보내는 데이터의 자료형에 대해서 기술
+                    // json데이터를 요청과 함께 전달, @RequestBody를 입력받는 로직에 추가
+                    "Content-Type" : "application/json", 
+                },
+                body : JSON.stringify({ // 여기에 실질적으로 요청과 함께 보낼 json 정보를 기술함
+                    replyWriter : document.getElementById("replyWriter").value,
+                    replyContent : document.getElementById("replyContent").value,
+                    blogId : "${blog.blogId}"
+                }), // insert 로직이기 때문에 response에 실제 화면에서 사용할 데이터가 오진 않음
+            }).then (() => {      // 받아오는 파라미터 없음           
+                // 댓글 작성 후 폼에 작성되어 있던 내용 소거
+                document.getElementById("replyWriter").value = "";
+                document.getElementById("replyContent").value = "";
+                alert("댓글 작성이 완료되었습니다!");
+                getAllReplies(blogId);
+            });
+        }
+
+        // 제출 버튼에 이벤트 연결하기. 버튼 클릭 시 insertReply
+        $replySubmit = document.getElementById("replySubmit");
+        $replySubmit.addEventListener("click", insertReply);
+
+
+        // 이벤트 객체를 활용해야 이벤트 위임을 구현하기 수월하므로 먼저 html객체부터 가져옵니다.
+        // 모든 댓글을 포함하고 있으면서 가장 가까운 영역인 #replies에 설정합니다.
+        const $replies = document.querySelector('#replies');
+
+        $replies.onclick = (e) => {
+            // 클릭한 요소가 #replies의 자손태그인 .deleteReplyBtn인지 검사하기
+            // 이벤트객체.target.matches는 클릭한 해당 요소가 어떤 태그인지 검사해줍니다.
+            if(!(e.target.matches('#replies .deleteReplyBtn'))){
+                return;
+            }
+            //console.log(e);
+            // 클릭 이벤트 객체 e의 target 속성의 dataset 속성 내부에 댓글 번호가 있으므로 확인
+            //console.log(e.target.dataset.replyid); // e.target.dataset.dataset['replyid'] 도 된다.
+            
+            const replyId = e.target.dataset.replyid;
+            
+            if(confirm("정말로 삭제하시겠어요?")) { // 예, 아니요로 답할 수 있는 경고창을 띄웁니다.
+                // 예를 선택하면 true, 아니요를 선택하면 false입니다.
+                //console.log(`\${replyId}번 요소 삭제`);
+
+                // 위 정보를 토대로 url 세팅 후 비동기 요청으로 삭제를 처리하고 댓글을 갱신해주세요
+                let url = `http://localhost:8080/reply/\${replyId}`;
+                fetch(url, {
+                    method: 'delete'
+                }).then(() => {
+                    alert("댓글 삭제가 완료되었습니다!");
+                    getAllReplies(blogId);
+                })
+            }
+            
+        }
+
 
 
     </script>

@@ -74,5 +74,17 @@ public class ReplyController {
     }
 
 
+    // delete 방식으로 /reply/{댓글번호} 주소로 요청이 들어왔을 때 실행되는 메서드 deleteReply()를 작성해주세요
+
+    @DeleteMapping(value = {"/{replyId}", "/{replyId}/"})
+    public ResponseEntity<String> deleteReply(@PathVariable long replyId){
+
+        replyService.deleteByReplyId(replyId);
+
+        return ResponseEntity
+                .ok("댓글 삭제가 완료되었습니다");
+
+
+    }
 
 }

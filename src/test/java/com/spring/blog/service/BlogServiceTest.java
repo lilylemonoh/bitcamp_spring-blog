@@ -77,7 +77,7 @@ public class BlogServiceTest {
                 .blogTitle(blogTitle)
                 .blogContent(blogContent)
                 .build();
-        int lastBlogIndex = 3;
+        int lastBlogIndex = 0;
         // when : save()를 호출해 DB에 저장합니다.
         blogService.save(blog);
         // then : 전체 요소의 개수가 4개인지 확인하고, 현재 얻어온 마지막 포스팅의 writer, blogTitle, blogContent가
