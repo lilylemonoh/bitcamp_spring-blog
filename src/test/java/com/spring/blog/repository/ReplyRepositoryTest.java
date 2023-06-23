@@ -1,9 +1,8 @@
 package com.spring.blog.repository;
 
-import com.spring.blog.dto.ReplyFindByIdDTO;
-import com.spring.blog.dto.ReplyInsertDTO;
-import com.spring.blog.dto.ReplyUpdateDTO;
-import org.assertj.core.api.Assertions;
+import com.spring.blog.dto.ReplyResponseDTO;
+import com.spring.blog.dto.ReplyCreateRequestDTO;
+import com.spring.blog.dto.ReplyUpdateRequestDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,7 +28,7 @@ public class ReplyRepositoryTest {
         // given : 2번 글을 조회하기 위한 fixture 저장
         long blogId = 2;
         // when : findAllByBlogId() 호출 및 결과 자료 저장
-        List<ReplyFindByIdDTO> result = replyRepository.findAllByBlogId(blogId);
+        List<ReplyResponseDTO> result = replyRepository.findAllByBlogId(blogId);
         // then : 2번 글에 연동된 댓글이 4개일 것이라고 단언
         assertEquals(4, result.size());
     }
@@ -42,7 +40,7 @@ public class ReplyRepositoryTest {
         // given : 3번 댓글 조회를 위한 fixture
         long replyId = 3;
         // when : 호출 및 결과 저장
-        ReplyFindByIdDTO result = replyRepository.findByReplyId(replyId);
+        ReplyResponseDTO result = replyRepository.findByReplyId(replyId);
         // then : id는 3번, 글쓴이는 바둑이일 것이다
         assertEquals(3, result.getReplyId());
         assertEquals("바둑이", result.getReplyWriter());
@@ -71,7 +69,7 @@ public class ReplyRepositoryTest {
         int blogId = 1;
         String replyWriter = "스프링";
         String replyContent = "댓글 인서트 테스트 중";
-        ReplyInsertDTO replyInsertDTO = ReplyInsertDTO.builder()
+        ReplyCreateRequestDTO replyInsertDTO = ReplyCreateRequestDTO.builder()
                 .blogId(blogId)
                 .replyWriter(replyWriter)
                 .replyContent(replyContent)
@@ -80,14 +78,14 @@ public class ReplyRepositoryTest {
         replyRepository.save(replyInsertDTO);
         // then : blogId번 글의 전체 댓글을 가지고 온 다음 마지막 인덱스 요소만 변수에 저장한 다음
         // getter를 이용해 위에서 넣은 fixture와 일치하는지 체크
-        List<ReplyFindByIdDTO> replyList = replyRepository.findAllByBlogId(blogId);
+        List<ReplyResponseDTO> replyList = replyRepository.findAllByBlogId(blogId);
         int lastIndex = replyList.size()-1;
         assertEquals(replyWriter, replyList.get(lastIndex).getReplyWriter());
 
         // 강사님 코드----
-        List<ReplyFindByIdDTO> resultList = replyRepository.findAllByBlogId(blogId);
+        List<ReplyResponseDTO> resultList = replyRepository.findAllByBlogId(blogId);
         // resultList의 개수 -1이 마지막 인덱스 번호이므로, resultList에서 마지막 인덱스 요소만 가져오기
-        ReplyFindByIdDTO result = resultList.get(resultList.size()-1);
+        ReplyResponseDTO result = resultList.get(resultList.size()-1);
         // 단언문 작성
         assertEquals(replyWriter,result.getReplyWriter());
         assertEquals(replyContent, result.getReplyContent());
@@ -102,7 +100,7 @@ public class ReplyRepositoryTest {
         long replyId = 3;
         String replyWriter = "멍멍이";
         String replyContent = "댓글 수정 테스트입니다";
-        ReplyUpdateDTO replyUpdateDTO = ReplyUpdateDTO.builder()
+        ReplyUpdateRequestDTO replyUpdateDTO = ReplyUpdateRequestDTO.builder()
                 .replyId(replyId)
                 .replyWriter(replyWriter)
                 .replyContent(replyContent)
@@ -110,7 +108,7 @@ public class ReplyRepositoryTest {
         // when
         replyRepository.update(replyUpdateDTO);
         // then
-        ReplyFindByIdDTO result = replyRepository.findByReplyId(replyId);
+        ReplyResponseDTO result = replyRepository.findByReplyId(replyId);
         assertEquals(replyContent, result.getReplyContent());
         assertEquals(replyWriter, result.getReplyWriter());
 //        assertNotEquals(result.getUpdatedAt(), result.getPublishedAt()); - 내가 짠 코드
@@ -128,7 +126,7 @@ public class ReplyRepositoryTest {
         // when : 삭제 수행
         replyRepository.deleteByBlogId(blogId);
         // then : blogId번 글 전체 댓글을 얻어와서 size가 0인지 확인
-        List<ReplyFindByIdDTO> resultList = replyRepository.findAllByBlogId(blogId);
+        List<ReplyResponseDTO> resultList = replyRepository.findAllByBlogId(blogId);
         assertEquals(0,resultList.size());
 
     }

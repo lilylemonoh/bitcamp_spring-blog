@@ -1,8 +1,8 @@
 package com.spring.blog.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring.blog.dto.ReplyFindByIdDTO;
-import com.spring.blog.dto.ReplyInsertDTO;
+import com.spring.blog.dto.ReplyCreateRequestDTO;
+import com.spring.blog.dto.ReplyUpdateRequestDTO;
 import com.spring.blog.repository.ReplyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -109,7 +109,7 @@ class ReplyControllerTest {
         String replyContent = "댓글 저장 테스트입니다";
         String url = "/reply";
         String url2 = "/reply/1/all";
-        ReplyInsertDTO replyInsertDTO = ReplyInsertDTO.builder()
+        ReplyCreateRequestDTO replyInsertDTO = ReplyCreateRequestDTO.builder()
                 .blogId(blogId)
                 .replyWriter(replyWriter)
                 .replyContent(replyContent)
@@ -149,8 +149,35 @@ class ReplyControllerTest {
         // then : repository를 이용해 전체 데이터를 가져온 후, 개수 비교 및 삭제한 3번 댓글은 null이 리턴되는지 확인
         assertEquals(3, replyRepository.findAllByBlogId(blogId).size());
         assertNull(replyRepository.findByReplyId(replyId));
-
     }
+
+    @Test
+    @Transactional
+    @DisplayName("댓글번호 4번의 replyWriter를 냥냥이로, replyContent를 냥냥펀치로 바꾼 뒤 조회 시 픽스처 일치")
+    public void updateReplyTest() throws Exception{
+        //given : 픽스처 생성 및 ReplyUpdateDTO 생성 후 픽스처 주입, json으로 데이터 직렬화
+        String replyWriter="냥냥이";
+        String replyContent="냥냥펀치";
+        String url = "/reply/4"; // 4번 댓글에 대한 수정 요청 넣기
+        ReplyUpdateRequestDTO replyUpdateRequestDTO = ReplyUpdateRequestDTO.builder()
+                                                .replyWriter(replyWriter)
+                                                .replyContent(replyContent)
+                                                .build();
+        // 데이터 직렬화
+        final String requestBody = objectMapper.writeValueAsString(replyUpdateRequestDTO);
+        //when : 직렬화된 데이터를 이용해 patch 방식으로 url에 요청
+        mockMvc.perform(patch(url)
+                .contentType(MediaType.APPLICATION_JSON) // 보내는 데이터는 JSON
+                .content(requestBody)); // 직렬화된 데이터 전송
+        //then: get 방식으로 url의 데이터를 가져와서 상태코드 200인지, 픽스쳐와 일치하는지 확인
+        final ResultActions result = mockMvc.perform(get(url)
+                .accept(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.replyWriter").value(replyWriter))
+                .andExpect(jsonPath("$.replyContent").value(replyContent));
+    }
+
 
 
 
