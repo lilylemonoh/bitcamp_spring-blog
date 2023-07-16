@@ -5,6 +5,7 @@ import com.spring.blog.exception.NotFoundBlogIdException;
 import com.spring.blog.service.BlogService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,13 +34,41 @@ public class BlogController {
     // 3. .jsp에서 볼 수 있도록 출력해주세요.
     // 해당 파일의 이름은 blog/list.jsp입니다.
 
-    @GetMapping("/list")
-    public String list(Model model) {
-        List<Blog> blogList = blogService.findAll();
-        model.addAttribute("blogList", blogList);
-        // /WEB-INF/views/    <- 여기까지 prefix     "blog/list"      여기 suffix->.jsp
+    // PathVariable에서 null 처리를 하고 싶다면 아래와 같이 경로패턴변수가 포함된 경로와 없는 경로 두 개를 묶어줍니다.
+    @GetMapping({"/list/{pageNum}", "/list"})
+    public String list(Model model, @PathVariable(required = false) Long pageNum) {
+        Page<Blog> pageInfo = blogService.findAll(pageNum);
+
+        // 한 페이지에 보여야 하는 페이징 버튼 그룹의 개수
+        final int PAGE_BTN_NUM = 10;
+
+        //현재 조회중인 페이지 번호(0부터 세므로 주의)
+        int currentPageNum = pageInfo.getNumber() + 1; // 현재 조회중인 페이지에 강조하기 위해서 필요함
+
+        // 현재 조회중인 페이지 그룹의 끝번호
+        int endPageNum = (int)Math.ceil(currentPageNum / (double)PAGE_BTN_NUM) * PAGE_BTN_NUM;
+
+        // 현재 조회중인 페이지 그룹의 시작번호
+        int startPageNum = endPageNum - PAGE_BTN_NUM + 1;
+
+        // 마지막 그룹 번호 보정
+        // 명목상 마지막 페이지(endPageNum)(60이라 가정)가 실제 마지막페이지(pageInfo.getTotalPages())(57이라 가정)보다 크면
+        // 실제 마지막 페이지를 명목상 마지막 페이지 값에 할당하는 코드
+        endPageNum = endPageNum > pageInfo.getTotalPages() ? pageInfo.getTotalPages() : endPageNum;
+
+        // prev(이전 페이지)버튼 - 안 보내고 jsp에서 만들기
+
+        model.addAttribute("currentPageNum", currentPageNum);
+        model.addAttribute("endPageNum", endPageNum);
+        model.addAttribute("startPageNum", startPageNum);
+        model.addAttribute("pageInfo", pageInfo);
+
        return "blog/list";
     }
+
+
+
+
 
     // 디테일 페이지의 주소 패턴
     // /blog/detail/글번호

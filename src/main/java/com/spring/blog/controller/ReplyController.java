@@ -3,6 +3,7 @@ package com.spring.blog.controller;
 import com.spring.blog.dto.ReplyResponseDTO;
 import com.spring.blog.dto.ReplyCreateRequestDTO;
 import com.spring.blog.dto.ReplyUpdateRequestDTO;
+import com.spring.blog.entity.Reply;
 import com.spring.blog.exception.NotFoundReplyByReplyIdException;
 import com.spring.blog.service.ReplyService;
 import org.springframework.http.HttpStatus;
@@ -29,9 +30,10 @@ public class ReplyController {
     @GetMapping("/{blogId}/all")
     //rest 서버는 응답 시 응답 코드와 응답 객체를 넘기기 때문에
     //ResponseEntity<자료형>을 리턴합니다.
-    public ResponseEntity<List<ReplyResponseDTO>> findAllReplies(@PathVariable long blogId){
+    public ResponseEntity<List<Reply>> findAllReplies(@PathVariable long blogId){
         // 서비스에서 리플 목록을 들고 옵니다.
-        List<ReplyResponseDTO> replies = replyService.findAllByBlogId(blogId);
+//        List<ReplyResponseDTO> replies = replyService.findAllByBlogId(blogId);
+        List<Reply> replies = replyService.findAllByBlogId(blogId);
 
         return ResponseEntity
                 .ok() // 200 코드
@@ -45,7 +47,9 @@ public class ReplyController {
     public ResponseEntity<?> findByReplyId(@PathVariable long replyId){
 
         // 서비스에서 특정 번호 리플을 가져옵니다.
-        ReplyResponseDTO replyFindByIdDTO = replyService.findByReplyId(replyId);
+//        ReplyResponseDTO replyFindByIdDTO = replyService.findByReplyId(replyId);
+
+        Reply replyFindByIdDTO = replyService.findByReplyId(replyId);
         if(replyFindByIdDTO == null ) {
             try {
                 throw new NotFoundReplyByReplyIdException("없는 댓글 번호를 조회했습니다");
@@ -63,7 +67,8 @@ public class ReplyController {
     // post 방식으로 /reply 주소로 요청이 들어왔을 때 실행되는 메서드 insertReply()를 작성해주세요.
     @PostMapping("")
     // RestController는 데이터를 json으로 주고받음. 따라서 @RequestBody 를 이용해 json으로 들어온 데이터를 역직렬화 하도록 설정
-    public ResponseEntity<String> insertReply(@RequestBody ReplyCreateRequestDTO replyInsertDTO){
+//    public ResponseEntity<String> insertReply(@RequestBody ReplyCreateRequestDTO replyInsertDTO){
+        public ResponseEntity<String> insertReply(@RequestBody Reply replyInsertDTO){
 
         replyService.save(replyInsertDTO);
 
@@ -92,9 +97,25 @@ public class ReplyController {
 //    @PatchMapping("/{replyId}")
     // 이렇게 쓰니까 테스트 통과를 못해서... PutMapping을 주석 처리하니까 통과했다(테스트코드에서 patch사용)
     // PUT, PATCH 두 메서드 다 가능하게 하려면 아래 방식으로 작성해야 한다.
+//    @RequestMapping(value="/{replyId}", method = {RequestMethod.PUT, RequestMethod.PATCH})
+//    public ResponseEntity<String> updateReply(@PathVariable long replyId,
+//                                              @RequestBody ReplyUpdateRequestDTO replyUpdateRequestDTO){
+//
+//        // json 데이터에 replyId를 포함하는 대신 url에 포함시켰으므로 requestBody에 추가해줘야 함
+//
+//        System.out.println("주입 전" + replyUpdateRequestDTO);
+//        replyUpdateRequestDTO.setReplyId(replyId);
+//        replyService.update(replyUpdateRequestDTO);
+//        System.out.println("주입 후" + replyUpdateRequestDTO);
+//
+//        return ResponseEntity
+//                .ok("댓글 수정이 완료되었습니다");
+//
+//    }
+
     @RequestMapping(value="/{replyId}", method = {RequestMethod.PUT, RequestMethod.PATCH})
     public ResponseEntity<String> updateReply(@PathVariable long replyId,
-                                              @RequestBody ReplyUpdateRequestDTO replyUpdateRequestDTO){
+                                              @RequestBody Reply replyUpdateRequestDTO){
 
         // json 데이터에 replyId를 포함하는 대신 url에 포함시켰으므로 requestBody에 추가해줘야 함
 
