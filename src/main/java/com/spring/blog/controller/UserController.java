@@ -31,8 +31,6 @@ public class UserController {
         return "user/signup";
     }
 
-    
-
     // POST 방식으로 회원가입 요청을 처리하게 해주세요.
     // 주소는 localhost:8080/signup 입니다.
     // 커맨드 객체로 User Entity를 선언해서, 가입 정보를 받아  .save()를 호출해주시면 됩니다.

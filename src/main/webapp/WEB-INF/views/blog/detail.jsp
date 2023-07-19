@@ -122,6 +122,7 @@
         <div class="col">
             <a href="/blog/list"><button class="btn btn-secondary">목록으로</button></a>
         </div>
+        <c:if test="${username eq blog.writer}"> <!-- blog의 글쓴이랑 인증 정보로 보낸 글쓴이 정보가 일치할 때만 버튼 노출 -->
         <div class="col">
             <form action="/blog/delete" method="POST">
                 <input type="hidden" name="blogId" value="${blog.blogId}">
@@ -134,6 +135,7 @@
                 <input type ="submit" class="btn btn-info" value="수정하기">
             </form>
         </div>
+        </c:if>
     </div>
 
 

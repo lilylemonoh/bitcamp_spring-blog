@@ -12,13 +12,15 @@
     <div class=".container">
         <form action="/login" method="POST">
             <div class="col-3">
-                <!--아이디는 username, 비밀번호는 password로 고정-->
+                <!--아이디는 username, 비밀번호는 password로 고정 (필드에는 username이 없음- 스프링시큐리티에 맞춘 것이다.)-->
                 <input type="text" name="username" placeholder="아이디">                 
             </div>
             <div class="col-3">
                 <input type="password" name="password" placeholder="비밀번호">
             </div>
-            <input type="submit" value="회원가입하기">
+            <input type="submit" value="로그인하기"><br>
+            <a href="/signup"> 회원가입하기 </a>
+
         </form>
     </div>
 

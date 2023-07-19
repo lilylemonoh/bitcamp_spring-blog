@@ -44,6 +44,7 @@
     </div>
     <div class="col-10">
 
+
       <!--페이징 처리 버튼 자리-->
       <ul class="pagination justify-content-center">
 
@@ -81,6 +82,8 @@
       </ul>
 
     </div><!-- 페이징 -->
+
+  <a href="/logout">로그아웃하기</a>
 
   </div><!--.container-->
 

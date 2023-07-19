@@ -41,9 +41,6 @@ public class User implements UserDetails {// UserDetails의 구현체만 스프�
         this.loginId = loginId;
     }
 
-
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("user"));
