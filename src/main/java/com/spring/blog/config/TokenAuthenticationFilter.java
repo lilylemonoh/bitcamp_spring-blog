@@ -39,6 +39,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication); // 인증 완료해주기
         }
 
+
         filterChain.doFilter(request, response);
     }
 
