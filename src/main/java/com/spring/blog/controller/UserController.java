@@ -63,7 +63,7 @@ public class UserController {
         User userInfo = usersService.getByCredentials(user.getLoginId());
 
         // 유저가 폼에서 날려주는 정보는 id랑 비번인데, 먼저 아이디를 통해 위에서 정보를 얻어오고
-        // 비밀번호는 암호회 구문끼리 비교해야 하므로, 이 경우 bCryptEncoder의 match(평문, 암호문)를 이용하면
+        // 비밀번호는 암호화 구문끼리 비교해야 하므로, 이 경우 bCryptEncoder의 match(평문, 암호문)를 이용하면
         // 같은 암호화 구문끼리 비교하는 효과가 생깁니다.
         // 상단에 bCryptPasswordEncoder 의존성을 생성한 후, if문 내부에서 비교합니다.
 
