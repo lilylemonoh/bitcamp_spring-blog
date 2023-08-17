@@ -31,14 +31,29 @@ public class User implements UserDetails {// UserDetails의 구현체만 스프�
     @Column(nullable = false, unique = true) // 중복닉네임 불가, 닉네임 지정 필수
     private String loginId;
 
+    // Oauth2.0 로그인 사용자의 경우, 로그인에 사용한 이메일이 자동으로 닉네임처럼 부여되므로,
+    // 다른 닉네임을 쓸 수 있게 하려면 닉네임 필드 필요
+    // 사용자 이름
+    @Column(name="nickname", unique = true)
+    private String nickname;
+
     // 비밀번호는 null 허용 (OAuth2.0을 활용한 소셜로그인은 비밀번호가 없음)
     private String password;
 
+
+    // 생성자에 nickname 추가
     @Builder                                     // 인증정보 (필드에는 없음)
-    public User(String email, String password, String loginId, String auth) { // 생성자에서 인증 정보를 요구함
+    public User(String email, String password, String loginId, String nickname, String auth) { // 생성자에서 인증 정보를 요구함
         this.email = email;
         this.password = password;
         this.loginId = loginId;
+        this.nickname = nickname;
+    }
+
+    // 사용자 닉네임 변경 지원 메서드
+    public User update(String nickname) {
+        this.nickname = nickname;
+        return this;
     }
 
     @Override
