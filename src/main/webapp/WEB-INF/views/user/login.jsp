@@ -23,6 +23,10 @@
             <a href="/signup"> 회원가입하기 </a>
 
         </form>
+
+        <!-- 소셜로그인은 /oauth2/authorization/서비스명
+        형식으로 링크를 걸어주시면 됩니다. -->
+        <a href="/oauth2/authorization/google">구글 로그인</a>
     </div>
 
 

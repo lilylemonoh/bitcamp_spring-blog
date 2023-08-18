@@ -1,9 +1,12 @@
 package com.spring.blog.config;
 
 import com.spring.blog.config.jwt.TokenProvider;
+import com.spring.blog.config.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.spring.blog.config.oauth.OAuth2UserCustomService;
+import com.spring.blog.config.oauth.Oauth2SuccessHandler;
 import com.spring.blog.repository.RefreshTokenRepository;
 import com.spring.blog.service.UserService;
+import com.spring.blog.service.UsersService;
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,10 @@ public class BasicSecurityConfig { // 베이직 방식 인증을 사용하도록
     // Oauth2.0을 활용하기 위한 객체들 추가하기
     private final OAuth2UserCustomService oAuth2UserCustomService;
     private final RefreshTokenRepository refreshTokenRepository;
+
+    // UsersService를 OAuth2SuccessHandler가 요구하므로 빈 추가
+    private final UsersService usersService;
+
 
     // 생성자 주입은 @RequiredArgsConstructor 어노테이션으로 대체
 //    @Autowired
@@ -84,9 +91,9 @@ public class BasicSecurityConfig { // 베이직 방식 인증을 사용하도록
 
                 // Oauth2.0에 관련된 형식으로 설정 추가
                 .oauth2Login(oauth2Config -> {
-                    oauth2Config.loginPage("/login")
+                    oauth2Config.loginPage("/login") // 로그인에 성공했을 때 넘어가는 페이지
                     .authorizationEndpoint(endpointConfig -> endpointConfig
-                            .authorizationRequestRepository(OAuth2AuthorizationRequestBasedOnCookieRepository())) // 하단에 추가 예정
+                            .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())) // 하단에 추가 예정
                             .successHandler(oAuth2SuccessHandler()) // 하단에 추가 예정
                             .userInfoEndpoint(userInfoConfig -> userInfoConfig
                                     .userService(oAuth2UserCustomService));
@@ -147,16 +154,11 @@ public class BasicSecurityConfig { // 베이직 방식 인증을 사용하도록
 
     //Oauth2.0 활용에 필요한 빈 정의
     @Bean
-    public OAuth2SuccessHandler oAuth2SuccessHandler() {
-        return new OAuth2SuccessHandler(tokenProvider,
+    public Oauth2SuccessHandler oAuth2SuccessHandler() {
+        return new Oauth2SuccessHandler(tokenProvider,
                 refreshTokenRepository,
-                oAuth2UserAuthorizationRequestBasedOnCookieRepository(),
-                userService);
-    }
-
-    @Bean
-    public TokenAuthenticationFilter tokenAuthenticationFilter() {
-        return new TokenAuthenticationFilter(tokenProvider);
+                oAuth2AuthorizationRequestBasedOnCookieRepository(),
+                usersService);
     }
 
     @Bean
